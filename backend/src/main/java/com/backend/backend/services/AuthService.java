@@ -5,6 +5,7 @@ import com.backend.backend.dto.UserRegisterDTO;
 import com.backend.backend.dto.UserResponseDTO;
 import com.backend.backend.entities.User;
 import com.backend.backend.repositories.UserRepository;
+import com.backend.backend.security.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,6 +22,9 @@ public class AuthService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     // Lógica para logear al usuario: valida el correo y la contraseña
     public UserResponseDTO login(UserLoginDTO dto) {
@@ -39,6 +43,7 @@ public class AuthService {
                 .fullName(user.getFirstName() + " " + user.getLastName())
                 .email(user.getEmail())
                 .role(user.getRole().name())
+                .token(jwtUtil.generateToken(UUID.fromString(user.getId()), user.getEmail()))
                 .build();
     }
 }
