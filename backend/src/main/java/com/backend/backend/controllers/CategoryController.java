@@ -16,8 +16,9 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+    // Maneja peticion crear una catergoria
     @PostMapping
-    public ResponseEntity<Void> create(@RequestBody CategoryDTO dto) {
+    public ResponseEntity<Void> createCategory(@RequestBody CategoryDTO dto) {
         try {
             categoryService.createCategory(dto);
             return ResponseEntity.ok().build();
@@ -26,6 +27,7 @@ public class CategoryController {
         }
     }
 
+    //Maneja peticion para obtener todas las categorias
     @GetMapping
     public ResponseEntity<List<CategoryResponseDTO>> getAll() {
         try {
