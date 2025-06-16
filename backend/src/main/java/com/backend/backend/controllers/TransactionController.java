@@ -53,4 +53,19 @@ public class TransactionController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    // Devuelve las transacciones filtradas por categoria y fecha
+    @GetMapping("/filter")
+    public ResponseEntity<List<Transaction>> filterTransactions(
+            @RequestParam(required = false) String categoryId,
+            @RequestParam(required = false) String date,
+            @AuthenticationPrincipal User user
+    ) {
+        try {
+            List<Transaction> filtered = transactionService.filterTransactions(user.getEmail(), categoryId, date);
+            return ResponseEntity.ok(filtered);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

@@ -10,6 +10,8 @@ import com.backend.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -51,5 +53,26 @@ public class TransactionService {
     // Devuelve las ultimas 5 transacciones del usuario
     public List<Transaction> getLast5Transactions(User user) {
         return transactionRepository.findTop5ByUserOrderByDateDesc(user);
+    }
+
+    // Devuelve las transacciones filtradas por categoria, fecha o categoria y fecha
+    public List<Transaction> filterTransactions(String email, String categoryId, String dateString) {
+        User user = userRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        LocalDate date = null;
+        if (dateString != null && !dateString.isEmpty()) {
+            date = LocalDate.parse(dateString);
+        }
+
+        if (categoryId != null && date != null) {
+            return transactionRepository.findByUserIdAndCategoryIdAndDate(user.getId(), categoryId, date);
+        } else if (categoryId != null) {
+            return transactionRepository.findByUserIdAndCategoryId(user.getId(), categoryId);
+        } else if (date != null) {
+            return transactionRepository.findByUserIdAndDate(user.getId(), date);
+        } else {
+            return transactionRepository.findByUserId(user.getId());
+        }
     }
 }
