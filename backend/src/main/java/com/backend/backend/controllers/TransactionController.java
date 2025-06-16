@@ -42,4 +42,15 @@ public class TransactionController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    // Devuelve las ultimas 5 transacciones
+    @GetMapping("/latest")
+    public ResponseEntity<List<Transaction>> getLastTransaction(@AuthenticationPrincipal User user){
+        try{
+            List<Transaction> last5 = transactionService.getLast5Transactions(user);
+            return ResponseEntity.ok(last5);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

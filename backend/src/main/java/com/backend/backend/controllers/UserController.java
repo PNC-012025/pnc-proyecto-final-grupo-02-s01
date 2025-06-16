@@ -2,7 +2,9 @@ package com.backend.backend.controllers;
 
 import com.backend.backend.dto.UserRegisterDTO;
 import com.backend.backend.dto.UserResponseDTO;
+import com.backend.backend.entities.Transaction;
 import com.backend.backend.entities.User;
+import com.backend.backend.services.TransactionService;
 import com.backend.backend.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,9 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private TransactionService transactionService;
+
     //Para validar si un string es un UUID valido
     private final Pattern UUID_REGEX = Pattern.compile(
             "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
@@ -34,6 +39,5 @@ public class UserController {
         } catch (Exception e){
             return ResponseEntity.badRequest().build();
         }
-
     }
 }

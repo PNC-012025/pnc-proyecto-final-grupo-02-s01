@@ -47,4 +47,9 @@ public class TransactionService {
         User user = userRepository.findByEmailIgnoreCase(email).orElseThrow();
         return transactionRepository.findByUserId(user.getId());
     }
+
+    // Devuelve las ultimas 5 transacciones del usuario
+    public List<Transaction> getLast5Transactions(User user) {
+        return transactionRepository.findTop5ByUserOrderByDateDesc(user);
+    }
 }

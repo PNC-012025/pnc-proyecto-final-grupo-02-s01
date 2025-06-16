@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, String> {
     List<Transaction> findByUserId(String userId);
+    List<Transaction> findTop5ByUserOrderByDateDesc(User user);
     List<Transaction> findByUser(User user);
     List<Transaction> findByIsPublicTrue();
 }
