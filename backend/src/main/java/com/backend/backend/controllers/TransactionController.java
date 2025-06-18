@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/transactions")
@@ -106,6 +107,28 @@ public class TransactionController {
         try {
             transactionService.deleteTransaction(id, user.getEmail());
             return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // Devuelve la suma de los ingresos y gastos del ultimo mes
+    @GetMapping("/summary/current-month")
+    public ResponseEntity<Map<String, Double>> getMonthlySummary(@AuthenticationPrincipal User user) {
+        try {
+            Map<String, Double> summary = transactionService.getCurrentMonthSummary(user);
+            return ResponseEntity.ok(summary);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
+    // Devuelve los ingresos y gastos de los ultimos 6 meses
+    @GetMapping("/summary/last-6-months")
+    public ResponseEntity<List<Map<String, Object>>> getMonthlyBreakdown(@AuthenticationPrincipal User user) {
+        try {
+            List<Map<String, Object>> data = transactionService.getSixMonthAnalytics(user);
+            return ResponseEntity.ok(data);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

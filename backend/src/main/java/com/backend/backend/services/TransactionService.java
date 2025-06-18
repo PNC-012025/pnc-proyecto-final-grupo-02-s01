@@ -13,9 +13,10 @@ import com.backend.backend.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class TransactionService {
@@ -157,5 +158,67 @@ public class TransactionService {
         }
 
         transactionRepository.delete(transaction);
+    }
+
+    // Calcula el total de gastos e ingresos del ultimo mes
+    public Map<String, Double> getCurrentMonthSummary(User user) {
+        LocalDate now = LocalDate.now();
+        LocalDate start = now.withDayOfMonth(1);
+        LocalDate end = now.withDayOfMonth(now.lengthOfMonth());
+
+        List<Transaction> transactions = transactionRepository.findByUserIdAndDateBetween(user.getId(), start, end);
+
+        double incomeRaw = transactions.stream()
+                .filter(t -> t.getType() == Transaction.Type.INCOME)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        double expenseRaw = transactions.stream()
+                .filter(t -> t.getType() == Transaction.Type.EXPENSE)
+                .mapToDouble(Transaction::getAmount)
+                .sum();
+
+        double income = BigDecimal.valueOf(incomeRaw).setScale(2, RoundingMode.HALF_UP).doubleValue();
+        double expense = BigDecimal.valueOf(expenseRaw).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+        Map<String, Double> result = new HashMap<>();
+        result.put("income", income);
+        result.put("expense", expense);
+        return result;
+    }
+
+    // Genera un resumen mensual de gastos e ingresos del usuario para los últimos 6 meses
+    public List<Map<String, Object>> getSixMonthAnalytics(User user) {
+        LocalDate now = LocalDate.now();
+        List<Map<String, Object>> result = new ArrayList<>();
+
+        for (int i = 5; i >= 0; i--) {
+            LocalDate month = now.minusMonths(i);
+            LocalDate start = month.withDayOfMonth(1);
+            LocalDate end = month.withDayOfMonth(month.lengthOfMonth());
+
+            List<Transaction> transactions = transactionRepository.findByUserIdAndDateBetween(user.getId(), start, end);
+
+            double incomeRaw = transactions.stream()
+                    .filter(t -> t.getType() == Transaction.Type.INCOME)
+                    .mapToDouble(Transaction::getAmount)
+                    .sum();
+
+            double expenseRaw = transactions.stream()
+                    .filter(t -> t.getType() == Transaction.Type.EXPENSE)
+                    .mapToDouble(Transaction::getAmount)
+                    .sum();
+
+            double income = BigDecimal.valueOf(incomeRaw).setScale(2, RoundingMode.HALF_UP).doubleValue();
+            double expense = BigDecimal.valueOf(expenseRaw).setScale(2, RoundingMode.HALF_UP).doubleValue();
+
+            Map<String, Object> data = new HashMap<>();
+            data.put("month", month.getMonth().toString());
+            data.put("income", income);
+            data.put("expense", expense);
+            result.add(data);
+        }
+
+        return result;
     }
 }
