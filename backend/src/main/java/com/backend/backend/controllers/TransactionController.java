@@ -54,17 +54,22 @@ public class TransactionController {
     }
 
     @GetMapping("/latest")
-    public ResponseEntity<List<Transaction>> getLastTransaction(@AuthenticationPrincipal User user){
+    public ResponseEntity<List<TransactionResponseDTO>> getLastTransaction(@AuthenticationPrincipal User user){
         try{
             List<Transaction> last5 = transactionService.getLast5Transactions(user);
-            return ResponseEntity.ok(last5);
+            
+            List<TransactionResponseDTO> responseDTOs = last5.stream()
+                    .map(TransactionResponseDTO::fromTransaction)
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(responseDTOs);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
     @GetMapping("/filter")
-    public ResponseEntity<List<Transaction>> filterTransactions(
+    public ResponseEntity<List<TransactionResponseDTO>> filterTransactions(
             @RequestParam(required = false) String categoryId,
             @RequestParam(required = false) String date,
             @RequestParam(required = false) Transaction.Type type,
@@ -72,7 +77,12 @@ public class TransactionController {
     ) {
         try {
             List<Transaction> filtered = transactionService.filterTransactions(user.getEmail(), categoryId, date, type);
-            return ResponseEntity.ok(filtered);
+            
+            List<TransactionResponseDTO> responseDTOs = filtered.stream()
+                    .map(TransactionResponseDTO::fromTransaction)
+                    .collect(Collectors.toList());
+            
+            return ResponseEntity.ok(responseDTOs);
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }

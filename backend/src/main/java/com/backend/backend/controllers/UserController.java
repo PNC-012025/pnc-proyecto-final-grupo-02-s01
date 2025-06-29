@@ -60,4 +60,30 @@ public class UserController {
         });
         return ResponseEntity.badRequest().body(errors);
     }
+
+    // Endpoint para cambiar contraseña
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestBody Map<String, String> request,
+            @AuthenticationPrincipal User user) {
+        try {
+            String currentPassword = request.get("currentPassword");
+            String newPassword = request.get("newPassword");
+            
+            if (currentPassword == null || newPassword == null) {
+                return ResponseEntity.badRequest().body(Map.of("error", "Contraseña actual y nueva contraseña son requeridas"));
+            }
+            
+            if (newPassword.length() < 6) {
+                return ResponseEntity.badRequest().body(Map.of("error", "La nueva contraseña debe tener al menos 6 caracteres"));
+            }
+            
+            userService.changePassword(user.getEmail(), currentPassword, newPassword);
+            return ResponseEntity.ok().body(Map.of("message", "Contraseña cambiada exitosamente"));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", "Error interno del servidor"));
+        }
+    }
 }
