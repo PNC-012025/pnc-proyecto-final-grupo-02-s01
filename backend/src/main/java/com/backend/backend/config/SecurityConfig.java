@@ -23,19 +23,14 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 1) Habilita CORS (usa la configuración de WebConfig)
                 .cors(Customizer.withDefaults())
-                // 2) Deshabilita CSRF (si usas tokens JWT)
                 .csrf(csrf -> csrf.disable())
-                // 3) Permite todas las peticiones OPTIONS sin autenticación
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/auth/**", "/users/register").permitAll()
                         .anyRequest().authenticated()
                 )
-                // 4) Añade tu filtro JWT
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
-                // 5) HTTP Basic (opcional)
                 .httpBasic(Customizer.withDefaults());
 
         return http.build();
