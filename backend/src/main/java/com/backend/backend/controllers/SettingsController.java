@@ -9,6 +9,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@CrossOrigin(
+        origins = "https://pnc-proyecto-final-frontend-grupo-0-delta.vercel.app",
+        allowedHeaders = "*",
+        allowCredentials = "true"
+)
 @RestController
 @RequestMapping("/settings")
 public class SettingsController {

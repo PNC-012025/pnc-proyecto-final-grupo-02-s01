@@ -12,7 +12,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.Map;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(
+        origins = "https://pnc-proyecto-final-frontend-grupo-0-delta.vercel.app",
+        allowedHeaders = "*",
+        allowCredentials = "true"
+)
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor

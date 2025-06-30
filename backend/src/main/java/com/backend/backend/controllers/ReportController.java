@@ -16,6 +16,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@CrossOrigin(
+        origins = "https://pnc-proyecto-final-frontend-grupo-0-delta.vercel.app",
+        allowedHeaders = "*",
+        allowCredentials = "true"
+)
 @RestController
 @RequestMapping("/report")
 public class ReportController {

@@ -20,7 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(
+        origins = "https://pnc-proyecto-final-frontend-grupo-0-delta.vercel.app",
+        allowedHeaders = "*",
+        allowCredentials = "true"
+)
 @RestController
 @RequestMapping("/users")
 public class UserController {
